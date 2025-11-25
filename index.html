@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze Solver</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Maze Solver</h1>
+    <h2>What is Maze Solver?</h2>
+    <p>
+      Maze Solver is a tool that lets you find the shortest path through a maze
+      you draw using backtracking algorithm, and visualize the solution.
+    </p>
+    <h2>How to Use Maze Solver?</h2>
+    <ol>
+      <li>
+        Draw a maze on the canvas provided below. Use black color for walls and
+        white color for paths.
+      </li>
+      <li>
+        Set the start point (green) and end point (red) by clicking on the
+        desired cells.
+      </li>
+      <li>
+        Click the "Solve Maze" button to find the shortest path from start to
+        end.
+      </li>
+      <li>The solution path will be highlighted in blue.</li>
+    </ol>
+    <hr />
+    <div class="maze-container">
+    <div class="size">
+      <input
+        type="number"
+        id="rows"
+        placeholder="size of the maze"
+        value="20"
+        min="5"
+        max="50"
+      />
+      <button id="generate-maze">Generate Maze</button>
+    </div>
+      <div class="maze-inner-container">
+        <div class="design-maze">
+          <div class="inp">
+            <input type="radio" id="wall" name="draw-mode" checked />
+          <label for="wall">Wall</label>
+          </div>
+          <div class="inp">
+          <input type="radio" id="path" name="draw-mode" />
+          <label for="path">Path</label>
+          </div>
+          <div class="inp">
+          <input type="radio" id="start" name="draw-mode" />
+          <label for="start">Starting Point</label>
+          </div>
+            <div class="inp">
+          <input type="radio" id="end" name="draw-mode" />
+          <label for="end">Ending Point</label>
+            </div>
+        </div>
+        
+        <div class="maze">
+        </div>
+    </div>
+    <p class="error"></p>
+    <div class="controls">
+    <button id="goBack">Go Back &lt;-</button>
+    <button id="redo">Redo -&gt;</button>
+    </div> 
+    <div class="solve-container">
+      <button id="solve-maze">Solve Maze</button>
+      <button id="clear-maze">Clear Maze</button>
+    </div>    
+</div>
+
+    <script src="maze.js"></script>
+  </body>
+</html>

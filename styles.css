@@ -1,0 +1,133 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+h1{
+    color: #333;
+    text-align: center;
+}
+p{
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+    margin: 20px;
+}
+ol{
+    margin: 20px;
+    padding-left: 40px;
+}
+li{
+    color: #444;
+    margin-bottom: 10px;
+}
+
+hr{
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+
+.maze-container{
+    text-align: center;
+    margin-top: 20px;
+}
+input[type="number"]{
+    width: 100px;
+    margin-right: 10px;
+    padding: 5px;
+}
+.size{
+    margin-bottom: 15px;
+}
+button{
+    padding: 6px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover{
+    background-color: #218838;
+}
+.maze-inner-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+
+.design-maze{
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 20px;
+    gap: 10px;
+}
+.inp{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.maze{
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    display: none;
+    border: 2px solid #333;
+}
+.cell{
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    display: inline-block;
+    vertical-align: top;
+}
+.cell.wall{
+    background-color: #333;
+}
+.cell.path{
+    background-color: #fff;
+}
+.cell.start{
+    background-color: #0f0;
+}
+.cell.end{
+    background-color: #f00;
+}
+.cell.solution{
+    background-color: #00f;
+}
+
+.controls{
+    text-align: center;
+    margin-top: 4px;
+    gap: 10px;
+    display: flex;
+    justify-content: center;
+}
+#goBack{
+    margin-top: 20px;
+    display: none;
+}
+#redo{
+    margin-top: 20px;
+    display: none;
+}
+
+.disabled-btn{
+    background-color: #6c757d !important;
+    cursor: not-allowed !important;
+}
+.error{
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+.solve-container{
+    display: none;
+    text-align: center;
+    margin: 20px 0px;
+}
