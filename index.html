@@ -31,51 +31,68 @@
     </ol>
     <hr />
     <div class="maze-container">
-    <div class="size">
-      <input
-        type="number"
-        id="rows"
-        placeholder="size of the maze"
-        value="20"
-        min="5"
-        max="50"
-      />
-      <button id="generate-maze">Generate Maze</button>
+      <div class="size">
+        <input
+          type="number"
+          id="rows"
+          placeholder="size of the maze"
+          value="20"
+          min="5"
+          max="50"
+        />
+        <button id="generate-maze">Generate Maze</button>
+      </div>
+
+      <div class="settings">
+      <label for="speed">Visualization Speed:</label>
+      <select id="speed">
+        <option value="5">Fast</option>
+        <option value="50" selected>Normal</option>
+        <option value="200">Slow</option>
+      </select>
+      <div class="seperator"></div>
+      <div class="inp">
+        <label for="size">Maze cell Width:</label>
+        <input type="number" id="sizeCell" value="20" min="5" max="30" />
+        <span>px</span>
+      </div>
+      <button id="change-cell-size">Change</button>
     </div>
+
+
       <div class="maze-inner-container">
         <div class="design-maze">
           <div class="inp">
             <input type="radio" id="wall" name="draw-mode" checked />
-          <label for="wall">Wall</label>
+            <label for="wall">Wall</label>
           </div>
           <div class="inp">
-          <input type="radio" id="path" name="draw-mode" />
-          <label for="path">Path</label>
+            <input type="radio" id="path" name="draw-mode" />
+            <label for="path">Path</label>
           </div>
           <div class="inp">
-          <input type="radio" id="start" name="draw-mode" />
-          <label for="start">Starting Point</label>
+            <input type="radio" id="start" name="draw-mode" />
+            <label for="start">Starting Point</label>
           </div>
-            <div class="inp">
-          <input type="radio" id="end" name="draw-mode" />
-          <label for="end">Ending Point</label>
-            </div>
+          <div class="inp">
+            <input type="radio" id="end" name="draw-mode" />
+            <label for="end">Ending Point</label>
+          </div>
         </div>
-        
-        <div class="maze">
-        </div>
-    </div>
-    <p class="error"></p>
-    <div class="controls">
-    <button id="goBack">Go Back &lt;-</button>
-    <button id="redo">Redo -&gt;</button>
-    </div> 
-    <div class="solve-container">
-      <button id="solve-maze">Solve Maze</button>
-      <button id="clear-maze">Clear Maze</button>
-    </div>    
-</div>
 
+        <div class="maze"></div>
+      </div>
+      <p class="error"></p>
+      <div class="controls">
+        <button id="goBack">Go Back &lt;-</button>
+        <button id="redo">Redo -&gt;</button>
+      </div>
+      <div class="solve-container">
+        <button id="solve-maze">Solve Maze</button>
+        <button id="clear-maze">Clear Maze</button>
+      </div>
+    </div>
+    
     <script src="maze.js"></script>
   </body>
 </html>

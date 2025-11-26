@@ -1,14 +1,33 @@
 let numEdits = 0;
-
-let lastHundredEdits = [];
+let solved = false;
+let lastEdits = [];
 let undoneEdits = [];
+let mazeCellSize = 20;
+document.getElementById("change-cell-size").addEventListener("click", function () {
+  const size = parseInt(document.getElementById("sizeCell").value);
+  if(size == mazeCellSize){
+    return;
+  }
+  if (size >= 5 && size <= 30) {
+    mazeCellSize = size;
+    document.documentElement.style.setProperty("--cell-size", `${size}px`);
+    document.getElementById("generate-maze").click();
+    document.querySelector(".error").textContent = "";
+  }
+});
+
+document.getElementById("sizeCell").addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    document.getElementById("change-cell-size").click();
+  }
+});
 
 document.getElementById("generate-maze").addEventListener("click", function () {
   const width = parseInt(document.getElementById("rows").value);
   const maze = document.querySelector(".maze");
   maze.style.display = "grid";
-  maze.style.gridTemplateColumns = `repeat(${width}, 20px)`;
-  maze.style.gridTemplateRows = `repeat(${width}, 20px)`;
+  maze.style.gridTemplateColumns = `repeat(${width}, ${mazeCellSize}px)`;
+  maze.style.gridTemplateRows = `repeat(${width}, ${mazeCellSize}px)`;
 
   maze.innerHTML = "";
   for (let i = 0; i < width; i++) {
@@ -32,8 +51,9 @@ document.getElementById("generate-maze").addEventListener("click", function () {
   document.getElementById("redo").style.display = "inline-block";
   document.getElementById("redo").classList.add("disabled-btn");
   document.querySelector(".design-maze").style.display = "flex";
+  document.querySelector(".settings").style.display = "flex";
   document.querySelector(".error").textContent = "";
-  lastHundredEdits = [];
+  lastEdits = [];
   undoneEdits = [];
   startDrawn = false;
   endDrawn = false;
@@ -63,21 +83,54 @@ function showError(message) {
 function clearError() {
   error.textContent = "";
 }
+
+function reset() {
+  if (solved) {
+    document.querySelectorAll(".cell").forEach((cell) => {
+      cell.classList.remove("solution");
+      const cellID = cell.id;
+      const cellPos = cellID.split("-");
+      const row = parseInt(cellPos[1]);
+      const col = parseInt(cellPos[2]);
+      if (
+        row !== 0 &&
+        col !== 0 &&
+        row !== parseInt(document.getElementById("rows").value) - 1 &&
+        col !== parseInt(document.getElementById("rows").value) - 1
+      ) {
+        cell.classList.remove("wall");
+      }
+      cell.classList.remove("start");
+      cell.classList.remove("end");
+      solved = false;
+    });
+    lastEdits = [];
+    undoneEdits = [];
+    numEdits = 0;
+    startDrawn = false;
+    endDrawn = false;
+    document.getElementById("goBack").classList.add("disabled-btn");
+    document.getElementById("redo").classList.add("disabled-btn");
+    clearError();
+  }
+}
+
 function draw(event) {
+  reset();
   clearError();
   const hadStart = event.target.classList.contains("start");
   const hadEnd = event.target.classList.contains("end");
   const prevClass = event.target.className;
-  
+
   event.target.className = "cell";
-  
+
   if (hadStart) {
     startDrawn = false;
   }
   if (hadEnd) {
     endDrawn = false;
   }
-  
+
   if (drawMode === "start") {
     if (startDrawn) {
       showError("Start point already drawn!");
@@ -100,7 +153,7 @@ function draw(event) {
   if (numEdits > 0) {
     document.getElementById("goBack").classList.remove("disabled-btn");
   }
-    undoneEdits = [];
+  undoneEdits = [];
   document.getElementById("redo").classList.add("disabled-btn");
 }
 document.querySelector(".maze").addEventListener("click", function (event) {
@@ -123,15 +176,16 @@ document.querySelector(".maze").addEventListener("mouseover", function (event) {
 });
 
 function appendEdit(action, cell, prevClass) {
-  lastHundredEdits.push({ action: action, cell: cell, prevClass: prevClass });
-  if (lastHundredEdits.length > 100) {
-    lastHundredEdits.shift();
+  lastEdits.push({ action: action, cell: cell, prevClass: prevClass });
+  if (lastEdits.length > 1000) {
+    lastEdits.shift();
   }
 }
 
 function GoBack() {
+  reset();
   if (numEdits > 0) {
-    const lastEdit = lastHundredEdits.pop();
+    const lastEdit = lastEdits.pop();
     lastEdit.cell.className = lastEdit.prevClass;
     numEdits--;
     if (lastEdit.action === "start") {
@@ -176,7 +230,7 @@ function redo() {
     const redoEdit = undoneEdits.pop();
     redoEdit.cell.className = "cell";
     redoEdit.cell.classList.add(redoEdit.action);
-    
+
     if (redoEdit.action === "start") {
       startDrawn = true;
     }
@@ -189,11 +243,11 @@ function redo() {
     if (redoEdit.prevClass.includes("end")) {
       endDrawn = false;
     }
-    
+
     numEdits++;
-    lastHundredEdits.push(redoEdit);
+    lastEdits.push(redoEdit);
     document.getElementById("goBack").classList.remove("disabled-btn");
-    
+
     if (undoneEdits.length === 0) {
       document.getElementById("redo").classList.add("disabled-btn");
     }
@@ -205,21 +259,25 @@ document.getElementById("redo").addEventListener("click", redo);
 
 document.getElementById("redo").addEventListener("mousedown", redo);
 
-
 document.getElementById("clear-maze").addEventListener("click", function () {
   const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-        let cellID = cell.id;
-        let cellPos = cellID.split("-");
-        let row = parseInt(cellPos[1]);
-        let col = parseInt(cellPos[2]);
-        if(row === 0 || col === 0 || row === parseInt(document.getElementById("rows").value) - 1 || col === parseInt(document.getElementById("rows").value) - 1) {
-            cell.className = "cell wall";
-        } else {
-            cell.className = "cell";
-        }
+  cells.forEach((cell) => {
+    let cellID = cell.id;
+    let cellPos = cellID.split("-");
+    let row = parseInt(cellPos[1]);
+    let col = parseInt(cellPos[2]);
+    if (
+      row === 0 ||
+      col === 0 ||
+      row === parseInt(document.getElementById("rows").value) - 1 ||
+      col === parseInt(document.getElementById("rows").value) - 1
+    ) {
+      cell.className = "cell wall";
+    } else {
+      cell.className = "cell";
+    }
   });
-  lastHundredEdits = [];
+  lastEdits = [];
   undoneEdits = [];
   numEdits = 0;
   startDrawn = false;
@@ -228,108 +286,122 @@ document.getElementById("clear-maze").addEventListener("click", function () {
   document.getElementById("redo").classList.add("disabled-btn");
 });
 
+let speed = 50;
+document.getElementById("speed").addEventListener("input", function (event) {
+  speed = parseInt(event.target.value);
+});
+
 document.getElementById("solve-maze").addEventListener("click", function () {
-    if(!startDrawn) {
-        showError("You must place a Start point.");
-        return;
+  if (!startDrawn) {
+    showError("You must place a Start point.");
+    return;
+  }
+  if (!endDrawn) {
+    showError("You must place an End point.");
+    return;
+  }
+  const size = parseInt(document.getElementById("rows").value);
+  const mazeDOM = document.querySelector(".maze");
+  const cells = mazeDOM.querySelectorAll(".cell");
+
+  const maze = [];
+  let start = null;
+  let end = null;
+
+  for (let i = 0; i < size; i++) {
+    maze[i] = [];
+    for (let j = 0; j < size; j++) {
+      const cell = document.getElementById(`cell-${i}-${j}`);
+      let type = cell.classList.contains("wall")
+        ? "#"
+        : cell.classList.contains("start")
+        ? "S"
+        : cell.classList.contains("end")
+        ? "E"
+        : " ";
+      maze[i][j] = {
+        x: i,
+        y: j,
+        val: type,
+        visited: false,
+        prev: null,
+        dom: cell,
+      };
+
+      if (type === "S") end = maze[i][j];
+      if (type === "E") start = maze[i][j];
     }
-    if(!endDrawn) {
-        showError("You must place an End point.");
-        return;
+  }
+
+  if (!start) {
+    showError("You must place a Start point.");
+    return;
+  }
+  if (!end) {
+    showError("You must place an End point.");
+    return;
+  }
+
+  solved = true;
+  document.querySelectorAll(".solution").forEach((cell) => {
+    cell.classList.remove("solution");
+  });
+  const queue = [];
+  queue.push(start);
+  start.visited = true;
+
+  const dx = [-1, 0, 1, 0];
+  const dy = [0, 1, 0, -1];
+
+  let found = false;
+
+  while (queue.length > 0) {
+    const curr = queue.shift();
+
+    if (curr === end) {
+      found = true;
+      break;
     }
-    const size = parseInt(document.getElementById("rows").value);
-    const mazeDOM = document.querySelector(".maze");
-    const cells = mazeDOM.querySelectorAll(".cell");
 
-    const maze = [];
-    let start = null;
-    let end = null;
+    for (let k = 0; k < 4; k++) {
+      const nx = curr.x + dx[k];
+      const ny = curr.y + dy[k];
 
-    for (let i = 0; i < size; i++) {
-        maze[i] = [];
-        for (let j = 0; j < size; j++) {
-            const cell = document.getElementById(`cell-${i}-${j}`);
-            let type = cell.classList.contains("wall") ? "#" :
-                       cell.classList.contains("start") ? "S" :
-                       cell.classList.contains("end") ? "E" : " ";
-            maze[i][j] = {
-                x: i,
-                y: j,
-                val: type,
-                visited: false,
-                prev: null,
-                dom: cell
-            };
-
-            if (type === "S") start = maze[i][j];
-            if (type === "E") end = maze[i][j];
+      if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+        const neigh = maze[nx][ny];
+        if (!neigh.visited && neigh.val !== "#") {
+          neigh.visited = true;
+          neigh.prev = curr;
+          queue.push(neigh);
         }
+      }
     }
+  }
 
-    if (!start) {
-        showError("You must place a Start point.");
-        return;
+  if (!found) {
+    showError("No path found.");
+    return;
+  }
+
+  cells.forEach((c) => c.classList.remove("path"));
+
+  let curr = end;
+  let steps = 0;
+
+  while (curr !== start) {
+    steps++;
+    if (curr.val !== "S") {
+      const cellDom = curr.dom;
+      const delay = steps * speed;
+      setTimeout(() => cellDom.classList.add("solution"), delay);
     }
-    if (!end) {
-        showError("You must place an End point.");
-        return;
-    }
+    curr = curr.prev;
+  }
 
-    const queue = [];
-    queue.push(start);
-    start.visited = true;
+  steps--;
 
-    const dx = [-1, 0, 1, 0];
-    const dy = [0, 1, 0, -1];
-
-    let found = false;
-
-    while (queue.length > 0) {
-        const curr = queue.shift();
-
-        if (curr === end) {
-            found = true;
-            break;
-        }
-
-        for (let k = 0; k < 4; k++) {
-            const nx = curr.x + dx[k];
-            const ny = curr.y + dy[k];
-
-            if (
-                nx >= 0 && nx < size &&
-                ny >= 0 && ny < size
-            ) {
-                const neigh = maze[nx][ny];
-                if (!neigh.visited && neigh.val !== "#") {
-                    neigh.visited = true;
-                    neigh.prev = curr;
-                    queue.push(neigh);
-                }
-            }
-        }
-    }
-
-    if (!found) {
-        showError("No path found.");
-        return;
-    }
-
-    cells.forEach(c => c.classList.remove("path"));
-
-    let curr = end;
-    let steps = 0;
-
-    while (curr !== start) {
-        steps++;
-        if (curr.val !== "E") {
-            curr.dom.classList.add("solution");
-        }
-        curr = curr.prev;
-    }
-
-    steps--;
-
-    document.querySelector(".error").textContent = `Shortest Path Found! Steps: ${steps}`;
-    document.querySelector(".error").style.color = "green";
+  document.querySelector(
+    ".error"
+  ).textContent = `Shortest Path Found! Steps: ${steps}`;
+  document.querySelector(".error").style.color = "green";
 });
