@@ -3,24 +3,28 @@ let solved = false;
 let lastEdits = [];
 let undoneEdits = [];
 let mazeCellSize = 20;
-document.getElementById("change-cell-size").addEventListener("click", function () {
-  const size = parseInt(document.getElementById("sizeCell").value);
-  if(size == mazeCellSize){
-    return;
-  }
-  if (size >= 5 && size <= 30) {
-    mazeCellSize = size;
-    document.documentElement.style.setProperty("--cell-size", `${size}px`);
-    document.getElementById("generate-maze").click();
-    document.querySelector(".error").textContent = "";
-  }
-});
+document
+  .getElementById("change-cell-size")
+  .addEventListener("click", function () {
+    const size = parseInt(document.getElementById("sizeCell").value);
+    if (size == mazeCellSize) {
+      return;
+    }
+    if (size >= 5 && size <= 30) {
+      mazeCellSize = size;
+      document.documentElement.style.setProperty("--cell-size", `${size}px`);
+      document.getElementById("generate-maze").click();
+      document.querySelector(".error").textContent = "";
+    }
+  });
 
-document.getElementById("sizeCell").addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    document.getElementById("change-cell-size").click();
-  }
-});
+document
+  .getElementById("sizeCell")
+  .addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      document.getElementById("change-cell-size").click();
+    }
+  });
 
 document.getElementById("generate-maze").addEventListener("click", function () {
   const width = parseInt(document.getElementById("rows").value);
@@ -342,10 +346,6 @@ document.getElementById("solve-maze").addEventListener("click", function () {
     return;
   }
 
-  solved = true;
-  document.querySelectorAll(".solution").forEach((cell) => {
-    cell.classList.remove("solution");
-  });
   const queue = [];
   queue.push(start);
   start.visited = true;
@@ -382,6 +382,10 @@ document.getElementById("solve-maze").addEventListener("click", function () {
     showError("No path found.");
     return;
   }
+  solved = true;
+  document.querySelectorAll(".solution").forEach((cell) => {
+    cell.classList.remove("solution");
+  });
 
   cells.forEach((c) => c.classList.remove("path"));
 
